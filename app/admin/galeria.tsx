@@ -1,59 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, Modal, Alert, Dimensions } from 'react-native';
-import { MoreVertical } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getImageUrl } from '../../api/index';
-import api from '../../api/index.js';
-import styles from '../../styles/styles';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { ArrowLeft, User } from "lucide-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import styles from "../../styles/styles";
 
-const { width } = Dimensions.get('window');
-const ITEM_SIZE = (width - 60) / 2;
+// Datos estáticos de los tipos de plantas
+const PLANT_TYPES = [
+  { id: '1', name: 'Arbusto', image: require('../../assets/arbusto.jpg') },
+  { id: '2', name: 'Capulin', image: require('../../assets/capulin.jpg') },
+  { id: '3', name: 'Malvon', image: require('../../assets/malvon.jpg') },
+  { id: '4', name: 'Ocote', image: require('../../assets/ocote.jpg') },
+  { id: '5', name: 'Pasto', image: require('../../assets/pasto.jpeg') },
+  { id: '6', name: 'Pera', image: require('../../assets/pera.jpg') },
+  { id: '7', name: 'Pino', image: require('../../assets/pino.png') },
+  { id: '8', name: 'Trebol', image: require('../../assets/trebol.webp') },
+];
 
-export default function GaleriaScreen() {
-  const router = useRouter();
-  const [imagenes, setImagenes] = useState([]);
+export default function PlantMenuScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImagen, setSelectedImagen] = useState(null);
-  const [nuevoNombre, setNuevoNombre] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("");
+  const router = useRouter();
 
-  const fetchImagenes = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/imagenes/');
-      setImagenes(response.data);
-    } catch (error) {
-      Alert.alert('Error', 'No se pudieron cargar las imágenes');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchImagenes();
+  React.useEffect(() => {
+    loadUserData();
   }, []);
 
-  const handleEditarNombre = (imagen) => {
-    setSelectedImagen(imagen);
-    setNuevoNombre(imagen.Nombre);
-    setModalVisible(true);
-  };
-
-  const handleGuardarNombre = async () => {
-    if (!nuevoNombre.trim()) {
-      Alert.alert('Error', 'Debes seleccionar un tipo de planta');
-      return;
-    }
+  const loadUserData = async () => {
     try {
-      await api.put(`/imagenes/${selectedImagen.Id_Planta}/`, { Nombre: nuevoNombre });
-      Alert.alert('Éxito', 'Nombre actualizado');
-      setModalVisible(false);
-      fetchImagenes();
+      const name = await AsyncStorage.getItem("user_name");
+      const username = await AsyncStorage.getItem("user_username");
+      setUserName(name || username || "Administrador");
     } catch (error) {
-      Alert.alert('Error', 'No se pudo actualizar el nombre');
+      console.error("Error loading user data:", error);
     }
   };
 
@@ -64,78 +49,58 @@ export default function GaleriaScreen() {
       "user_role",
       "user_id",
     ]);
-    router.replace('/login');
+    router.replace("/login");
   };
 
-  const renderItem = ({ item }) => {
-    const imageUrl = getImageUrl(item.imagen);
-
-    console.log(`URL generada: ${imageUrl}`);
-
-    return (
-      <View style={{
-        backgroundColor: '#e8f5e9',
-        borderRadius: 10,
-        margin: 10,
-        padding: 10,
-        alignItems: 'center',
-        width: ITEM_SIZE,
-        borderWidth: 1,
-        borderColor: '#2ecc71',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-        elevation: 2,
-      }}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={{
-            width: ITEM_SIZE - 20,
-            height: ITEM_SIZE - 20,
-            borderRadius: 8,
-            marginBottom: 8,
-            borderWidth: 1,
-            borderColor: '#2ecc71',
-          }}
-          resizeMode="cover"
-        />
-        <Text style={[styles.userName, { color: '#006400', marginBottom: 6, textAlign: 'center' }]}>
-          {item.Nombre}
-        </Text>
-        <Text style={{ color: '#2c3e50', marginBottom: 6, fontSize: 13 }}>
-          Precisión: {item.confianza}%
-        </Text>
-        <TouchableOpacity
-          style={[styles.cameraButton, { backgroundColor: 'green', alignSelf: 'center', minWidth: 100, paddingVertical: 8, paddingHorizontal: 10 }]}
-          onPress={() => handleEditarNombre(item)}
-        >
-          <Text style={[styles.cameraButtonText, { fontSize: 16 }]}>Editar nombre</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={styles.galleryItem}
+      onPress={() =>
+        router.push({
+          pathname: "/admin/GaleryScreen",
+          params: { type: item.name },
+        })
+      }
+    >
+      <Image
+        source={item.image}
+        style={styles.galleryImage}
+        resizeMode="cover"
+      />
+      <Text style={styles.galleryImageName}>{item.name}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Galería de Imágenes</Text>
+        <TouchableOpacity onPress={() => router.back()}>
+          <ArrowLeft size={24} color="white" />
+        </TouchableOpacity>
+
+        <View style={{ flex: 1, marginLeft: 15 }}>
+          <Text style={styles.welcomeText}>Tipos de Plantas</Text>
+          <Text style={styles.userNameText}>{userName}</Text>
+        </View>
+
         <TouchableOpacity
           onPress={() => setMenuVisible(!menuVisible)}
           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
         >
-          <MoreVertical size={24} color="white" />
+          <User size={24} color="white" />
         </TouchableOpacity>
+
         {menuVisible && (
           <View style={styles.menu}>
             <TouchableOpacity
               onPress={() => {
                 setMenuVisible(false);
-                router.push('/admin');
+                router.push("/admin");
               }}
               style={styles.menuButton}
             >
-              <Text style={styles.menuItem}>Ir al Panel Principal</Text>
+              <Text style={styles.menuItem}>Inicio</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={async () => {
@@ -150,70 +115,16 @@ export default function GaleriaScreen() {
         )}
       </View>
 
+      {/* Galería de tipos de plantas */}
       <FlatList
-        data={imagenes}
-        keyExtractor={item => item.Id_Planta.toString()}
+        data={PLANT_TYPES}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
         numColumns={2}
-        contentContainerStyle={{ padding: 10, paddingBottom: 30 }}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No hay imágenes subidas</Text>
-          </View>
-        }
-        refreshing={loading}
-        onRefresh={fetchImagenes}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+        contentContainerStyle={{ padding: 15 }}
+        showsVerticalScrollIndicator={false}
       />
-
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { minHeight: 220, justifyContent: 'flex-start' }]}>
-            <Text style={styles.modalTitle}>Editar nombre de la planta</Text>
-            <View style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, marginVertical: 18, backgroundColor: '#fff', overflow: 'hidden' }}>
-              <Picker
-                selectedValue={nuevoNombre}
-                onValueChange={setNuevoNombre}
-                style={{ width: 220, height: 50, color: '#333', fontSize: 13 }}
-                dropdownIconColor="#27ae60"
-                mode="dropdown"
-              >
-                <Picker.Item label="Selecciona tipo" value="" />
-                {[
-                  "Arbusto",
-                  "Capulin",
-                  "Malvon",
-                  "Ocote",
-                  "Pasto",
-                  "Pera",
-                  "Pino",
-                  "Trebol",
-                ].map((tipo) => (
-                  <Picker.Item key={tipo} label={tipo} value={tipo} />
-                ))}
-              </Picker>
-            </View>
-            <View style={styles.modalButtonGroup}>
-              <TouchableOpacity
-                style={[styles.cancelButton, styles.cameraButton]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.cameraButtonText}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.confirmButton, styles.cameraButton]}
-                onPress={handleGuardarNombre}
-              >
-                <Text style={styles.cameraButtonText}>Guardar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

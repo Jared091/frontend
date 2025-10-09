@@ -839,6 +839,89 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
     marginVertical: 15,
   },
+
+  card: {
+  backgroundColor: "#e6f2e6",
+  borderRadius: 12,
+  marginBottom: 15,
+  width: "48%",
+  overflow: "hidden",
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 5,
+},
+cardImage: {
+  width: "100%",
+  height: 120,
+},
+cardTitle: {
+  textAlign: "center",
+  padding: 8,
+  color: "#003300",
+  fontWeight: "600",
+},
+value: {
+    fontSize: 16,
+    color: '#333',
+    marginTop: 4,
+  },
+  title: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: '600',
+  }, infoContainer: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 16,
+    padding: 16,
+    elevation: 2,
+  },
+   infoBlock: {
+    marginBottom: 12,
+  },
+  backButton: {
+    marginRight: 10,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#006400',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  infoContainer: {
+    backgroundColor: '#FFFFF0',
+    margin: 16,
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  infoBlock: {
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E8F5E9',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8B7765',
+    marginBottom: 4,
+  },
+  value: {
+    fontSize: 16,
+    color: '#333',
+  },
+  backButton: {
+    padding: 8,
+  },
 });
 
 export default styles;

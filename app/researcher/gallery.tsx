@@ -1,81 +1,45 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, Search, User } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
+  View,
+  Text,
+  TouchableOpacity,
   FlatList,
   Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from 'react-native';
-import { getImageUrl } from '../../api/index';
-import api from '../../api/index.js';
-import styles from '../../styles/styles';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { ArrowLeft, User } from "lucide-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import styles from "../../styles/styles";
 
-const { width } = Dimensions.get('window');
-const ITEM_SIZE = (width - 60) / 2;
+// Datos estáticos de los tipos de plantas
+const PLANT_TYPES = [
+  { id: '1', name: 'Arbusto', image: require('../../assets/arbusto.jpg') },
+  { id: '2', name: 'Capulin', image: require('../../assets/capulin.jpg') },
+  { id: '3', name: 'Malvon', image: require('../../assets/malvon.jpg') },
+  { id: '4', name: 'Ocote', image: require('../../assets/ocote.jpg') },
+  { id: '5', name: 'Pasto', image: require('../../assets/pasto.jpeg') },
+  { id: '6', name: 'Pera', image: require('../../assets/pera.jpg') },
+  { id: '7', name: 'Pino', image: require('../../assets/pino.png') },
+  { id: '8', name: 'Trebol', image: require('../../assets/trebol.webp') },
+];
 
-export default function GalleryScreen() {
-  const router = useRouter();
-  const params = useLocalSearchParams();
-  const [imagenes, setImagenes] = useState([]);
-  const [filteredImagenes, setFilteredImagenes] = useState([]);
+export default function ResearcherGalleryScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(params.search ? String(params.search) : '');
-  const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
+  const router = useRouter();
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadUserData();
-    fetchImagenes();
   }, []);
-
-  useEffect(() => {
-    filterImagenes();
-  }, [searchQuery, imagenes]);
 
   const loadUserData = async () => {
     try {
-      const name = await AsyncStorage.getItem('user_name');
-      const username = await AsyncStorage.getItem('user_username');
-      setUserName(name || username || 'Investigador');
+      const name = await AsyncStorage.getItem("user_name");
+      const username = await AsyncStorage.getItem("user_username");
+      setUserName(name || username || "Investigador");
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.error("Error loading user data:", error);
     }
-  };
-
-  const fetchImagenes = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/imagenes/');
-      setImagenes(response.data);
-    } catch (error) {
-      Alert.alert('Error', 'No se pudieron cargar las imágenes');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterImagenes = () => {
-    if (!searchQuery.trim()) {
-      setFilteredImagenes(imagenes);
-      return;
-    }
-
-    const query = searchQuery.toLowerCase().trim();
-    const filtered = imagenes.filter(imagen => 
-      imagen.Nombre?.toLowerCase().includes(query) ||
-      imagen.Especie?.toLowerCase().includes(query) ||
-      imagen.Ubicacion?.toLowerCase().includes(query) ||
-      imagen.fecha_creacion?.toLowerCase().includes(query) ||
-      imagen.confianza?.toString().includes(query)
-    );
-    setFilteredImagenes(filtered);
   };
 
   const handleLogout = async () => {
@@ -85,64 +49,54 @@ export default function GalleryScreen() {
       "user_role",
       "user_id",
     ]);
-    router.replace('/login');
+    router.replace("/login");
   };
 
-  const renderItem = ({ item }) => {
-    const imageUrl = getImageUrl(item.imagen);
-
-    return (
-      <View style={styles.galleryItem}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.galleryImage}
-          resizeMode="cover"
-        />
-        <View style={styles.galleryInfo}>
-          <Text style={styles.galleryPlantName}>{item.Nombre}</Text>
-          <Text style={styles.gallerySpecies}>{item.Especie}</Text>
-          <Text style={styles.galleryLocation}>{item.Ubicacion}</Text>
-          <Text style={styles.galleryConfidence}>
-            Confianza: {item.confianza}%
-          </Text>
-          {item.fecha_creacion && (
-            <Text style={styles.galleryDate}>
-              {new Date(item.fecha_creacion).toLocaleDateString()}
-            </Text>
-          )}
-        </View>
-      </View>
-    );
-  };
+  const renderItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={styles.galleryItem}
+      onPress={() =>
+        router.push({
+          pathname: "/researcher/GaleryScreen",
+          params: { type: item.name },
+        })
+      }
+    >
+      <Image
+        source={item.image}
+        style={styles.galleryImage}
+        resizeMode="cover"
+      />
+      <Text style={styles.galleryImageName}>{item.name}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => router.back()}>
           <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
-        
+
         <View style={{ flex: 1, marginLeft: 15 }}>
-          <Text style={styles.welcomeText}>Galería de Plantas</Text>
+          <Text style={styles.welcomeText}>Tipos de Plantas</Text>
           <Text style={styles.userNameText}>{userName}</Text>
         </View>
-        
+
         <TouchableOpacity
           onPress={() => setMenuVisible(!menuVisible)}
           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
         >
           <User size={24} color="white" />
         </TouchableOpacity>
-        
+
         {menuVisible && (
           <View style={styles.menu}>
             <TouchableOpacity
               onPress={() => {
                 setMenuVisible(false);
-                router.push('/researcher');
+                router.push("/researcher");
               }}
               style={styles.menuButton}
             >
@@ -161,49 +115,16 @@ export default function GalleryScreen() {
         )}
       </View>
 
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar por nombre, especie, ubicación, fecha o confianza..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor="#A7C4A0"
-        />
-        <TouchableOpacity style={styles.searchButton}>
-          <Search size={20} color="white" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.resultsCounter}>
-        <Text style={styles.resultsText}>
-          {filteredImagenes.length} {filteredImagenes.length === 1 ? 'imagen encontrada' : 'imágenes encontradas'}
-          {searchQuery && ` para "${searchQuery}"`}
-        </Text>
-      </View>
-
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#006400" />
-          <Text style={styles.loadingText}>Cargando imágenes...</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredImagenes}
-          keyExtractor={item => item.Id_Planta.toString()}
-          renderItem={renderItem}
-          numColumns={2}
-          contentContainerStyle={styles.galleryList}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                {searchQuery ? 'No se encontraron imágenes que coincidan con la búsqueda' : 'No hay imágenes disponibles'}
-              </Text>
-            </View>
-          }
-          refreshing={loading}
-          onRefresh={fetchImagenes}
-        />
-      )}
+      {/* Galería de tipos de plantas */}
+      <FlatList
+        data={PLANT_TYPES}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+        contentContainerStyle={{ padding: 15 }}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 }
