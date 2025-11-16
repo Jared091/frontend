@@ -922,6 +922,144 @@ value: {
   backButton: {
     padding: 8,
   },
+
+  // ===== NUEVOS ESTILOS PARA ADMIN SCREEN =====
+  // Botón agregar usuario
+  addButton: {
+    flexDirection: 'row',
+    backgroundColor: '#D4A76A',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+
+  // Estilos para items de usuario con botón eliminar
+  userItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#2E7D32',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#66BB6A',
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  userType: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  deleteButton: {
+    padding: 8,
+    borderRadius: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+
+  // Contenedores de botones en modales
+  modalButtonContainer: {
+    marginTop: 20,
+    gap: 10,
+  },
+  modalActionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+
+  // Botones de modales
+  modalButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  updateButton: {
+    backgroundColor: '#228B22',
+  },
+  createButton: {
+    backgroundColor: '#D4A76A',
+  },
+  cancelButton: {
+    backgroundColor: '#8B7765',
+  },
+  deleteButtonModal: {
+    backgroundColor: '#FF6B6B',
+  },
+  deleteConfirmButton: {
+    backgroundColor: '#FF6B6B',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+
+  // Texto de confirmación de eliminación
+  deleteText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 10,
+    color: '#8B7765',
+  },
+
+  // Inputs para crear usuario
+  input: {
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DDD',
+    marginBottom: 10,
+    fontSize: 16,
+    color: '#333',
+  },
+
+  // Subtítulo en modales
+  modalSubtitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 5,
+    color: '#8B7765',
+  },
+  requiredNote: {
+    fontSize: 12,
+    color: '#FF6B6B',
+    textAlign: 'center',
+    marginTop: 10,
+    fontStyle: 'italic',
+  },
 });
 
 export default styles;

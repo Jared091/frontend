@@ -1,8 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Cambia la URL base a la de tu servidor en Azure
-const BASE_URL = "https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net/api/";
+// Puedes usar una variable de entorno para la URL base
+const BASE_URL = "http://192.168.1.68:8000/api/";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -18,10 +18,10 @@ export const getImageUrl = (imagePath) => {
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
-  // Actualiza la lógica para usar el dominio de Azure
+  // Simplificar la lógica
   return imagePath.startsWith('/') 
-    ? `https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net${imagePath}`
-    : `https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net/media/${imagePath}`;
+    ? `http://192.168.1.68:8000${imagePath}`
+    : `http://192.168.1.68:8000/media/${imagePath}`;
 };
 
 // Interceptor para agregar el token automáticamente

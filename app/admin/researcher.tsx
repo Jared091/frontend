@@ -1,23 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import { Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
+import * as ImagePicker from "expo-image-picker";
+import { useRouter } from 'expo-router';
+import { MoreVertical } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  Modal,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
-  Image,
-  ScrollView,
-  Modal,
-  ActivityIndicator,
-  PanResponder,
+  View
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { MoreVertical } from "lucide-react-native";
-import { useRouter } from 'expo-router';
-import * as ImagePicker from "expo-image-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/index.js";
-import { Feather } from "@expo/vector-icons";
 import styles from "../../styles/styles";
 
 export default function AdminResearcherScreen() {
@@ -100,11 +99,14 @@ export default function AdminResearcherScreen() {
         const imagen = resultado.assets[0];
         setImagenUri(imagen.uri);
 
+        const fileType = imagen.uri.split('.').pop();
+        const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
         const formData = new FormData();
         formData.append("image", {
           uri: imagen.uri,
-          type: "image/jpeg",
-          name: `clasificacion_${Date.now()}.jpg`,
+          type: mimeType,
+          name: `clasificacion_${Date.now()}.${fileType}`,
         });
 
         const respuesta = await api.post(
@@ -153,11 +155,14 @@ export default function AdminResearcherScreen() {
         const imagen = result.assets[0];
         setImagenUri(imagen.uri);
 
+        const fileType = imagen.uri.split('.').pop();
+        const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
         const formData = new FormData();
         formData.append("image", {
           uri: imagen.uri,
-          type: "image/jpeg",
-          name: `clasificacion_${Date.now()}.jpg`,
+          type: mimeType,
+          name: `clasificacion_${Date.now()}.${fileType}`,
         });
 
         const respuesta = await api.post(
@@ -188,17 +193,21 @@ export default function AdminResearcherScreen() {
   };
 
   const guardarPlanta = async () => {
+    // Extraer la extensión del archivo para determinar el MIME type
+    const fileType = imagenUri.split('.').pop();
+    const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
     const formData = new FormData();
     formData.append("Nombre", nombrePlanta);
     formData.append("Especie", especie);
     formData.append("Ubicacion", ubicacion);
     formData.append("usuario", Number(userId));
     formData.append("estado", 1);
-    formData.append("confianza", resultado?.confianza ?? 0);
+    formData.append("confianza", String(resultado?.confianza ?? 0));
     formData.append("imagen", {
       uri: imagenUri,
-      type: "image/jpeg",
-      name: `planta_${Date.now()}.jpg`,
+      type: mimeType,
+      name: `planta_${Date.now()}.${fileType}`,
     });
 
     try {
@@ -222,14 +231,17 @@ export default function AdminResearcherScreen() {
 
   const registrarClasificacion = async (predictedClass, confidence, uri) => {
     try {
+      const fileType = uri.split('.').pop();
+      const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
       const formData = new FormData();
       formData.append("usuario", Number(userId));
       formData.append("clase_predicha", predictedClass);
       formData.append("confianza", confidence);
       formData.append("imagen", {
         uri,
-        type: "image/jpeg",
-        name: `registro_${Date.now()}.jpg`,
+        type: mimeType,
+        name: `registro_${Date.now()}.${fileType}`,
       });
 
       await api.post("/clasificaciones/", formData, {
@@ -508,11 +520,14 @@ export default function AdminResearcherScreen() {
                 style={[styles.confirmButton, styles.cameraButton]}
                 onPress={async () => {
                   try {
+                    const fileType = imagenUri.split('.').pop();
+                    const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
                     const formData = new FormData();
                     formData.append("image", {
                       uri: imagenUri,
-                      type: "image/jpeg",
-                      name: `correccion_${Date.now()}.jpg`,
+                      type: mimeType,
+                      name: `correccion_${Date.now()}.${fileType}`,
                     });
                     formData.append("true_class", claseSeleccionada);
 

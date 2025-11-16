@@ -96,11 +96,14 @@ export default function ClientFormScreen() {
         const imagen = resultado.assets[0];
         setImagenUri(imagen.uri);
 
+        const fileType = imagen.uri.split('.').pop();
+        const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
         const formData = new FormData();
         formData.append("image", {
           uri: imagen.uri,
-          type: "image/jpeg",
-          name: `clasificacion_${Date.now()}.jpg`,
+          type: mimeType,
+          name: `clasificacion_${Date.now()}.${fileType}`,
         });
 
         const respuesta = await api.post(
@@ -143,11 +146,14 @@ export default function ClientFormScreen() {
         const imagen = result.assets[0];
         setImagenUri(imagen.uri);
 
+        const fileType = imagen.uri.split('.').pop();
+        const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
         const formData = new FormData();
         formData.append("image", {
           uri: imagen.uri,
-          type: "image/jpeg",
-          name: `clasificacion_${Date.now()}.jpg`,
+          type: mimeType,
+          name: `clasificacion_${Date.now()}.${fileType}`,
         });
 
         const respuesta = await api.post(
@@ -178,17 +184,20 @@ export default function ClientFormScreen() {
   };
 
   const guardarPlanta = async () => {
+    const fileType = imagenUri.split(".").pop();
+    const mimeType = `image/${fileType === "jpg" ? "jpeg" : fileType}`;
+
     const formData = new FormData();
     formData.append("Nombre", nombrePlanta);
     formData.append("Especie", especie);
     formData.append("Ubicacion", ubicacion);
     formData.append("usuario", Number(userId));
     formData.append("estado", 1);
-    formData.append("confianza", resultado?.confianza ?? 0);
+    formData.append("confianza", String(resultado?.confianza ?? 0));
     formData.append("imagen", {
       uri: imagenUri,
-      type: "image/jpeg",
-      name: `planta_${Date.now()}.jpg`,
+      type: mimeType,
+      name: `planta_${Date.now()}.${fileType}`,
     });
 
     try {

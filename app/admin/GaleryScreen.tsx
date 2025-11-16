@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft, User } from "lucide-react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import api from "../../api";
 import styles from "../../styles/styles";
 
@@ -40,7 +40,7 @@ export default function GalleryScreen() {
   const fetchImagenes = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/imagenes/");
+      const response = await api.get("/plantas/");
       let allImages = response.data;
 
       // Filtrar por tipo específico
@@ -53,14 +53,12 @@ export default function GalleryScreen() {
       // Normalizar campos y construir URL completa
       const normalized = allImages.map((img: any, index: number) => ({
         id: img.Id_Planta ?? index,
-        Nombre: img.Nombre ?? "Desconocido",
+        Nombre: img.nombre ?? "Desconocido",
         Especie: img.Especie ?? "Sin especie",
         Ubicacion: img.Ubicacion ?? "No especificada",
         Confianza: img.confianza ?? 0,
         AreaAfectada: img.area_afectada ?? "Sin daños",
-        ImagenURL: img.imagen?.startsWith('http') 
-          ? img.imagen 
-          : `http://192.168.1.65:8000/media/${img.imagen}`,
+        ImagenURL: img.imagen,
         ...img,
       }));
 
