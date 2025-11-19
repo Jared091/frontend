@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-// Cambia la URL base a la de tu servidor en Azure
+// La URL base debe incluir el prefijo '/api/' que utiliza el backend de Django.
 const BASE_URL = "https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net/api/";
 
 const api = axios.create({
@@ -18,10 +18,10 @@ export const getImageUrl = (imagePath) => {
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
-  // Actualiza la lógica para usar el dominio de Azure
+  // La URL de las imágenes no suele estar bajo /api/, por lo que se construye desde la raíz del dominio.
   return imagePath.startsWith('/') 
     ? `https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net${imagePath}`
-    : `https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net/media/${imagePath}`;
+    : `https://agronovaia-cvaga0d6h5fhgmff.mexicocentral-01.azurewebsites.net${imagePath}`; // Asumiendo que imagePath ya incluye /media/
 };
 
 // Interceptor para agregar el token automáticamente

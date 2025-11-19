@@ -210,7 +210,8 @@ export default function ClientFormScreen() {
 
       if (response.status === 201 || response.status === 200) {
         Alert.alert("Éxito", "Planta guardada correctamente.");
-        // Solo resetea el formulario, no redirige a galería
+        // Redirige a la galería del cliente después de guardar
+        router.push('/client/gallery');
         setNombrePlanta("");
         setEspecie("");
         setUbicacion("");
@@ -413,7 +414,7 @@ export default function ClientFormScreen() {
             </View>
           )}
 
-          {imagenUri && !cargando && (
+          {imagenUri && !cargando && ( // Muestra la imagen siempre que imagenUri exista
             <View style={styles.resultadoContainer}>
               <Image
                 source={{ uri: imagenUri }}
@@ -443,7 +444,7 @@ export default function ClientFormScreen() {
                       {resultado.confianza}%
                     </Text>
                   </Text>
-                  {/* NO incluir botón de corregir clasificación para clientes */}
+                  {/* Se elimina el botón de corregir clasificación para clientes */}
                 </View>
               )}
             </View>

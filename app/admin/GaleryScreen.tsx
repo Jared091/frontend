@@ -14,7 +14,7 @@ import {
 import api from "../../api";
 import styles from "../../styles/styles";
 
-export default function GalleryScreen() {
+export default function GaleryScreen() {
   const { type } = useLocalSearchParams();
   const [imagenes, setImagenes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,26 +40,28 @@ export default function GalleryScreen() {
   const fetchImagenes = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/plantas/");
+      // Con el backend corregido, la ruta para listar (GET) y crear (POST)
+      // debería ser la misma, siguiendo el estándar de REST.
+      const response = await api.get("/imagenes/");
       let allImages = response.data;
 
       // Filtrar por tipo específico
       if (type) {
-        allImages = allImages.filter(
-          (img: any) => img.Nombre === type || img.Especie === type
-        );
+        allImages = allImages.filter((img: any) => img.Nombre === type);
       }
 
       // Normalizar campos y construir URL completa
       const normalized = allImages.map((img: any, index: number) => ({
         id: img.Id_Planta ?? index,
-        Nombre: img.nombre ?? "Desconocido",
+        Nombre: img.Nombre ?? "Desconocido", // Corregido: API usa 'Nombre' con mayúscula
         Especie: img.Especie ?? "Sin especie",
         Ubicacion: img.Ubicacion ?? "No especificada",
-        Confianza: img.confianza ?? 0,
+        Confianza: img.confianza ?? "0", // API devuelve confianza como string
         AreaAfectada: img.area_afectada ?? "Sin daños",
-        ImagenURL: img.imagen,
-        ...img,
+        // La API ahora devuelve la URL completa. Nos aseguramos de que sea una URL válida.
+        ImagenURL: typeof img.imagen === 'string' && img.imagen.startsWith('http') 
+          ? img.imagen 
+          : '',
       }));
 
       setImagenes(normalized);

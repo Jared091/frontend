@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Image,
-} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { ArrowLeft, User } from "lucide-react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import styles from "../../styles/styles";
 
 // Datos estáticos de los tipos de plantas
@@ -57,7 +57,7 @@ export default function PlantMenuScreen() {
       style={styles.galleryItem}
       onPress={() =>
         router.push({
-          pathname: "/admin/GaleryScreen",
+          pathname: "/admin/GaleryScreen", // Aseguramos que coincide con el nombre de archivo del layout
           params: { type: item.name },
         })
       }

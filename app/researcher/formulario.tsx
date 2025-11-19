@@ -123,12 +123,6 @@ export default function ResearcherFormScreen() {
             nombre: respuesta.data.class,
             confianza: confianza,
           });
-
-          await registrarClasificacion(
-            respuesta.data.class,
-            confianza,
-            imagen.uri
-          );
         }
       }
     } catch (error) {

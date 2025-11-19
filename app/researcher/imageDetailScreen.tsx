@@ -4,7 +4,7 @@ import React from "react";
 import { Image, ScrollView, Text, View, Pressable } from "react-native";
 import styles from "../../styles/styles";
 
-const ResearcherImageDetailScreen = () => {
+const ImageDetailScreen = () => {
   const { 
     imagen, 
     nombre, 
@@ -67,4 +67,4 @@ const ResearcherImageDetailScreen = () => {
   );
 };
 
-export default ResearcherImageDetailScreen;
+export default ImageDetailScreen;

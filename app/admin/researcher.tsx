@@ -124,11 +124,8 @@ export default function AdminResearcherScreen() {
             confianza: confianza,
           });
 
-          await registrarClasificacion(
-            respuesta.data.class,
-            confianza,
-            imagen.uri
-          );
+          // Ya no es necesario registrar la clasificación aquí si el objetivo principal es guardar la planta.
+          // El guardado final se hace con el botón "Guardar Planta".
         }
       }
     } catch (error) {
@@ -445,14 +442,16 @@ export default function AdminResearcherScreen() {
             </View>
           )}
 
-          {imagenUri && !cargando && (
+          {imagenUri && !cargando && ( // Contenedor principal para la imagen y el resultado
             <View style={styles.resultadoContainer}>
+              {/* Muestra la imagen siempre que imagenUri exista */}
               <Image
                 source={{ uri: imagenUri }}
                 style={{ width: 224, height: 224, borderRadius: 10, marginBottom: 15, borderWidth: 2, borderColor: '#2ecc71', alignSelf: 'center' }}
                 resizeMode="cover"
               />
-              {resultado && (
+              {/* Muestra el resultado de la clasificación solo si existe */}
+              {resultado && ( 
                 <View style={styles.resultadoBox}>
                   <Feather
                     name="check-circle"

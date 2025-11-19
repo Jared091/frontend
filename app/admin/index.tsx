@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { MoreVertical, Plus, Trash2 } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import api from '../../api';
+import api from '../../api/index';
 import styles from '../../styles/styles';
 
 export default function AdminScreen() {

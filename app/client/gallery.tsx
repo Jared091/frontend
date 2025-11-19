@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Image,
-} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { ArrowLeft, User } from "lucide-react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import styles from "../../styles/styles";
 
-// Datos estáticos de los tipos de plantas (mismo que admin)
+// Datos estáticos de los tipos de plantas
 const PLANT_TYPES = [
   { id: '1', name: 'Arbusto', image: require('../../assets/arbusto.jpg') },
   { id: '2', name: 'Capulin', image: require('../../assets/capulin.jpg') },
@@ -23,7 +23,7 @@ const PLANT_TYPES = [
   { id: '8', name: 'Trebol', image: require('../../assets/trebol.webp') },
 ];
 
-export default function ClientGalleryScreen() {
+export default function PlantMenuScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [userName, setUserName] = useState("");
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function ClientGalleryScreen() {
       style={styles.galleryItem}
       onPress={() =>
         router.push({
-          pathname: "/client/GaleryScreen",
+          pathname: "/client/GaleryScreen", // Aseguramos que coincide con el nombre de archivo del layout
           params: { type: item.name },
         })
       }
