@@ -170,7 +170,7 @@ export default function LoginScreen() {
 
                 <Text style={styles.termsSectionTitle}>5. LIMITACIÓN DE RESPONSABILIDAD{"\n\n"}</Text>
                 
-                5.1. La aplicación se proporciona "tal cual" sin garantías de ningún tipo.{"\n"}
+                5.1. La aplicación se proporciona &quot;tal cual&quot; sin garantías de ningún tipo.{"\n"}
                 5.2. No nos hacemos responsables por daños derivados del uso de la aplicación.{"\n\n"}
 
                 <Text style={styles.termsSectionTitle}>6. MODIFICACIONES{"\n\n"}</Text>

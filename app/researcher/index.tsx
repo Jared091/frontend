@@ -41,7 +41,7 @@ export default function HomeScreen() {
         "user_username"
       ]);
       router.replace('/login');
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "No se pudo cerrar sesión.");
     }
   };

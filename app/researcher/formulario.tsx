@@ -114,15 +114,24 @@ export default function ResearcherFormScreen() {
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
+
         if (
           respuesta.data?.class &&
           respuesta.data.confidence !== undefined
         ) {
           const confianza = Math.round(respuesta.data.confidence * 100);
+
           setResultado({
             nombre: respuesta.data.class,
             confianza: confianza,
           });
+
+          // 🔥 GUARDAR CLASIFICACIÓN AUTOMÁTICAMENTE
+          await registrarClasificacion(
+            respuesta.data.class,
+            confianza,
+            imagen.uri
+          );
         }
       }
     } catch (error) {
@@ -135,56 +144,65 @@ export default function ResearcherFormScreen() {
     }
   };
 
-  const cargarGaleria = async () => {
-    if (!validarCampos()) return;
-    try {
-      setCargando(true);
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 0.8,
+
+const cargarGaleria = async () => {
+  if (!validarCampos()) return;
+  try {
+    setCargando(true);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets?.[0]) {
+      const imagen = result.assets[0];
+      setImagenUri(imagen.uri);
+
+      const fileType = imagen.uri.split('.').pop();
+      const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+
+      const formData = new FormData();
+      formData.append("image", {
+        uri: imagen.uri,
+        type: mimeType,
+        name: `clasificacion_${Date.now()}.${fileType}`,
       });
 
-      if (!result.canceled && result.assets?.[0]) {
-        const imagen = result.assets[0];
-        setImagenUri(imagen.uri);
+      const respuesta = await api.post(
+        "/classify-tree/",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-        const fileType = imagen.uri.split('.').pop();
-        const mimeType = `image/${fileType === 'jpg' ? 'jpeg' : fileType}`;
+      if (
+        respuesta.data?.class &&
+        respuesta.data.confidence !== undefined
+      ) {
+        const confianza = Math.round(respuesta.data.confidence * 100);
 
-        const formData = new FormData();
-        formData.append("image", {
-          uri: imagen.uri,
-          type: mimeType,
-          name: `clasificacion_${Date.now()}.${fileType}`,
+        setResultado({
+          nombre: respuesta.data.class,
+          confianza: confianza,
         });
 
-        const respuesta = await api.post(
-          "/classify-tree/",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+        // 🔥 GUARDAR CLASIFICACIÓN AUTOMÁTICAMENTE
+        await registrarClasificacion(
+          respuesta.data.class,
+          confianza,
+          imagen.uri
         );
-
-        if (
-          respuesta.data?.class &&
-          respuesta.data.confidence !== undefined
-        ) {
-          const confianza = Math.round(respuesta.data.confidence * 100);
-          setResultado({
-            nombre: respuesta.data.class,
-            confianza: confianza,
-          });
-        }
       }
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        error.message || "No se pudo cargar o clasificar la imagen"
-      );
-    } finally {
-      setCargando(false);
     }
-  };
+  } catch (error) {
+    Alert.alert(
+      "Error",
+      error.message || "No se pudo cargar o clasificar la imagen"
+    );
+  } finally {
+    setCargando(false);
+  }
+};
 
   const guardarPlanta = async () => {
     const fileType = imagenUri.split(".").pop();
@@ -532,7 +550,7 @@ export default function ResearcherFormScreen() {
                     );
                     Alert.alert("¡Gracias!", "Corrección enviada.");
                     setMostrarModalCorreccion(false);
-                  } catch (error) {
+                  } catch {
                     Alert.alert("Error", "No se pudo enviar la corrección");
                   }
                 }}

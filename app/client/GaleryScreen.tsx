@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft, User } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -25,6 +25,38 @@ export default function GaleryScreen() {
   useEffect(() => {
     loadUserData();
     fetchImagenes();
+  }, [type, fetchImagenes]);
+
+  const fetchImagenes = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/imagenes/");
+      let allImages = response.data;
+
+      if (type) {
+        allImages = allImages.filter((img: any) => img.Nombre === type);
+      }
+
+      const normalized = allImages.map((img: any, index: number) => ({
+        id: img.Id_Planta ?? index,
+        Nombre: img.Nombre ?? "Desconocido",
+        Especie: img.Especie ?? "Sin especie",
+        Ubicacion: img.Ubicacion ?? "No especificada",
+        Confianza: img.confianza ?? "0",
+        AreaAfectada: img.area_afectada ?? "Sin daños",
+        ImagenURL:
+          typeof img.imagen === "string" && img.imagen.startsWith("http")
+            ? img.imagen
+            : "",
+      }));
+
+      setImagenes(normalized);
+    } catch (error) {
+      console.error("Error al cargar imágenes:", error);
+      Alert.alert("Error", "No se pudieron cargar las imágenes");
+    } finally {
+      setLoading(false);
+    }
   }, [type]);
 
   const loadUserData = async () => {
@@ -34,42 +66,6 @@ export default function GaleryScreen() {
       setUserName(name || username || "Investigador");
     } catch (error) {
       console.error("Error loading user data:", error);
-    }
-  };
-
-  const fetchImagenes = async () => {
-    try {
-      setLoading(true);
-      // Con el backend corregido, la ruta para listar (GET) y crear (POST)
-      // debería ser la misma, siguiendo el estándar de REST.
-      const response = await api.get("/imagenes/");
-      let allImages = response.data;
-
-      // Filtrar por tipo específico
-      if (type) {
-        allImages = allImages.filter((img: any) => img.Nombre === type);
-      }
-
-      // Normalizar campos y construir URL completa
-      const normalized = allImages.map((img: any, index: number) => ({
-        id: img.Id_Planta ?? index,
-        Nombre: img.Nombre ?? "Desconocido", // Corregido: API usa 'Nombre' con mayúscula
-        Especie: img.Especie ?? "Sin especie",
-        Ubicacion: img.Ubicacion ?? "No especificada",
-        Confianza: img.confianza ?? "0", // API devuelve confianza como string
-        AreaAfectada: img.area_afectada ?? "Sin daños",
-        // La API ahora devuelve la URL completa. Nos aseguramos de que sea una URL válida.
-        ImagenURL: typeof img.imagen === 'string' && img.imagen.startsWith('http') 
-          ? img.imagen 
-          : '',
-      }));
-
-      setImagenes(normalized);
-    } catch (error) {
-      console.error("Error al cargar imágenes:", error);
-      Alert.alert("Error", "No se pudieron cargar las imágenes");
-    } finally {
-      setLoading(false);
     }
   };
 

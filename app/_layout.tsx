@@ -1,6 +1,5 @@
-import { Stack } from 'expo-router';
+import { Stack , useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
-import { useRouter, useSegments } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RootLayout() {
@@ -34,7 +33,7 @@ export default function RootLayout() {
     };
 
     checkAuth();
-  }, [segments]);
+  }, [segments, router]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -44,7 +43,7 @@ export default function RootLayout() {
       <Stack.Screen name="admin" />
       <Stack.Screen name="client" />
       <Stack.Screen name="researcher" />
-      <Stack.Screen name="index" redirect href="/login" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }

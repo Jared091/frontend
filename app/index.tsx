@@ -37,7 +37,7 @@ export default function Index() {
     };
 
     checkAuthAndRedirect();
-  }, []);
+  }, [router]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5DC' }}>

@@ -221,7 +221,7 @@ export default function AdminScreen() {
         "user_id",
       ]);
       router.replace('/login');
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "No se pudo cerrar sesión.");
     }
   };
